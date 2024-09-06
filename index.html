@@ -1,73 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UNIS2</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        h1 {
-            margin: 20px 0;
-            font-size: 36px;
-            color: #333;
-            text-align: center;
-        }
-        .sidebar {
-            width: 200px;
-            background-color: #333;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100%;
-        }
-        .sidebar a {
-            text-decoration: none;
-            color: white;
-            padding: 10px;
-            margin: 5px 0;
-            background-color: #555;
-            text-align: center;
-            border-radius: 4px;
-        }
-        .sidebar a:hover {
-            background-color: #777;
-        }
-        .content {
-            margin-left: 220px;
-            padding: 20px;
-            text-align: center;
-        }
-        .team-header {
-            font-size: 28px;
-            margin-top: 40px;
-            color: #333;
-        }
-        .team-name {
-            font-size: 24px;
-            margin-top: 20px;
-            color: #555;
-        }
-    </style>
+    <title>Клікер</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>UNIS2 Organization</h1>
-    <div class="sidebar">
-        <a href="https://www.youtube.com/@UNIS2_Org" target="_blank">YouTube</a>
-        <a href="https://t.me/unis2_org" target="_blank">Telegram</a>
-        <a href="https://x.com/AzuzInc39923" target="_blank">Twitter</a>
-        <a href="https://www.tiktok.com/@unis2.organizatio" target="_blank">TikTok</a>
-        <a href="https://example.com" target="_blank">Міні Гра</a>
+    <div class="container">
+        <h1>Клікер</h1>
+        <div id="gameSection">
+            <p>Кількість кліків: <span id="counter">0</span></p>
+            <button id="clickButton">Клікни мене!</button>
+        </div>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
+
