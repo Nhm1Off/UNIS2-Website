@@ -34,18 +34,31 @@
             margin-bottom: 10px;
             color: white;
         }
+        .input-container {
+            margin-bottom: 20px;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+        }
     </style>
 </head>
 <body>
-    <div class="nickname">Нік: <span id="nickname"></span></div>
+    <div class="input-container">
+        <label for="nicknameInput">Ваш нік:</label>
+        <input type="text" id="nicknameInput" placeholder="Введіть свій нік" />
+        <button onclick="setNickname()">Задати нік</button>
+    </div>
+    <div class="nickname">Нік: <span id="nickname">Не задано</span></div>
     <div class="score">Очки: <span id="score">0</span></div>
     <div class="coin" onclick="increaseScore()"></div>
 
     <!-- Firebase SDKs -->
     <script type="module">
-        // Firebase конфігурація
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js";
-        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCjKuXdZA7qKhdARrIwfrnnU_fmD2XTIhg",
@@ -60,15 +73,27 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Генерація рандомного ніка
-        const nicknames = ["Player123", "CoinMaster", "TapChampion", "GoldHunter", "LuckyTapper"];
-        const nickname = nicknames[Math.floor(Math.random() * nicknames.length)];
-        document.getElementById('nickname').textContent = nickname;
-
+        let nickname = null;
         let score = 0;
+
+        // Функція для встановлення ніка
+        function setNickname() {
+            const input = document.getElementById('nicknameInput').value.trim();
+            if (input) {
+                nickname = input;
+                document.getElementById('nickname').textContent = nickname;
+                // Збереження ніка в локальному сховищі (для збереження між перезавантаженнями)
+                localStorage.setItem('nickname', nickname);
+            }
+        }
 
         // Функція для збільшення очок і збереження їх у Firebase
         async function increaseScore() {
+            if (!nickname) {
+                alert('Будь ласка, спочатку задайте свій нік!');
+                return;
+            }
+            
             score++;
             document.getElementById("score").textContent = score;
 
@@ -85,7 +110,17 @@
             }
         }
 
-        // Робимо функцію доступною глобально
+        // Завантаження ніка з локального сховища при завантаженні сторінки
+        window.onload = function() {
+            const storedNickname = localStorage.getItem('nickname');
+            if (storedNickname) {
+                nickname = storedNickname;
+                document.getElementById('nickname').textContent = nickname;
+            }
+        };
+
+        // Робимо функції доступними глобально
+        window.setNickname = setNickname;
         window.increaseScore = increaseScore;
     </script>
 </body>
