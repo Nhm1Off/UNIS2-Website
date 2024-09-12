@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Клікер на монетку</title>
+    <title>Coin Clicker</title>
     <style>
         body {
             display: flex;
@@ -42,18 +42,37 @@
             font-size: 16px;
             border-radius: 5px;
             border: none;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #connectTonWallet {
+            margin-top: 20px; /* Move the button down */
         }
     </style>
 </head>
 <body>
     <div class="input-container">
-        <label for="nicknameInput">Ваш нік:</label>
-        <input type="text" id="nicknameInput" placeholder="Введіть свій нік" />
-        <button onclick="setNickname()">Задати нік</button>
+        <label for="nicknameInput">Your nickname:</label>
+        <input type="text" id="nicknameInput" placeholder="Enter your nickname" />
+        <button onclick="setNickname()">Set</button>
     </div>
-    <div class="nickname">Нік: <span id="nickname">Не задано</span></div>
-    <div class="score">Очки: <span id="score">0</span></div>
+    <div class="nickname">Nickname: <span id="nickname">Not set</span></div>
+    <div class="score">Score: <span id="score">0</span></div>
     <div class="coin" onclick="increaseScore()"></div>
+    <button id="connectTonWallet">Connect TON Wallet</button>
 
     <!-- Firebase SDKs -->
     <script type="module">
@@ -69,34 +88,31 @@
             appId: "1:415911484254:web:79ff5ea1f06d5d7bb10dcf"
         };
 
-        // Ініціалізація Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
         let nickname = null;
         let score = 0;
 
-        // Функція для встановлення ніка
         function setNickname() {
             const input = document.getElementById('nicknameInput').value.trim();
             if (input) {
                 nickname = input;
                 document.getElementById('nickname').textContent = nickname;
-                loadScoreFromFirebase(); // Завантаження очків після встановлення ніка
+                localStorage.setItem('nickname', nickname);
+                loadScoreFromFirebase();
             }
         }
 
-        // Функція для збільшення очок і збереження їх у Firebase та localStorage
         async function increaseScore() {
             if (!nickname) {
-                alert('Будь ласка, спочатку задайте свій нік!');
+                alert('Please set your nickname first!');
                 return;
             }
 
             score++;
             document.getElementById("score").textContent = score;
 
-            // Збереження очків у localStorage
             localStorage.setItem('score', score);
 
             try {
@@ -104,13 +120,12 @@
                     nickname: nickname,
                     score: score
                 });
-                console.log("Очки успішно збережені!"); // Успішне збереження
+                console.log("Score successfully saved!");
             } catch (error) {
-                console.error("Помилка при збереженні очків: ", error); // Виводимо помилку
+                console.error("Error saving score: ", error);
             }
         }
 
-        // Функція для завантаження очків з Firebase
         async function loadScoreFromFirebase() {
             try {
                 const docRef = doc(db, "players", nickname);
@@ -118,16 +133,18 @@
                 if (docSnap.exists()) {
                     score = docSnap.data().score || 0;
                     document.getElementById('score').textContent = score;
-                    // Збереження очків у localStorage
                     localStorage.setItem('score', score);
-                    console.log("Очки успішно завантажені з Firebase!");
+                    console.log("Score successfully loaded from Firebase!");
+                } else {
+                    score = 0;
+                    document.getElementById('score').textContent = score;
+                    localStorage.setItem('score', score);
                 }
             } catch (error) {
-                console.error("Помилка при завантаженні очків: ", error);
+                console.error("Error loading score: ", error);
             }
         }
 
-        // Завантаження ніка та очків з локального сховища при завантаженні сторінки
         window.onload = function() {
             const storedNickname = localStorage.getItem('nickname');
             const storedScore = localStorage.getItem('score');
@@ -139,15 +156,29 @@
                 score = parseInt(storedScore, 10) || 0;
                 document.getElementById('score').textContent = score;
             }
-            // Якщо нік є, спробувати завантажити очки з Firebase
             if (nickname) {
                 loadScoreFromFirebase();
             }
         };
 
-        // Робимо функції доступними глобально
         window.setNickname = setNickname;
         window.increaseScore = increaseScore;
+
+        // Initialize TON Web SDK and connect wallet
+        const tonWeb = new TonWeb();
+        const ton = tonWeb.provider;
+
+        document.getElementById('connectTonWallet').addEventListener('click', async () => {
+            try {
+                const wallet = await ton.requestAccounts();
+                console.log('Connected TON Wallet:', wallet);
+                alert('TON Wallet connected!');
+            } catch (error) {
+                console.error('Error connecting TON Wallet:', error);
+                alert('Failed to connect TON Wallet');
+            }
+        });
     </script>
 </body>
 </html>
+
