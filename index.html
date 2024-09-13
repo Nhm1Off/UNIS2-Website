@@ -7,32 +7,21 @@
     <style>
         body {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             height: 100vh;
             margin: 0;
-            flex-direction: column;
             font-family: Arial, sans-serif;
             background-image: url('https://i.ibb.co/LSvnpCT/fon-clicker.png');
             background-size: cover;
             background-position: center;
+            overflow: hidden; /* Prevents scrollbars */
         }
-        .coin {
-            width: 130px;
-            height: 130px;
-            background-image: url('https://i.ibb.co/TKxqDzK/coindol-removebg-preview.png');
-            background-size: cover;
-            cursor: pointer;
-        }
-        .score {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: white;
-        }
-        .nickname {
-            font-size: 18px;
-            margin-bottom: 10px;
-            color: white;
+        .top-container {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
         }
         .input-container {
             margin-bottom: 20px;
@@ -58,26 +47,51 @@
         button:hover {
             background-color: #0056b3;
         }
-        #connectTonWallet {
-            margin-top: 20px; /* Move the button down */
+        .coin {
+            width: 182px; /* Increased by 40% from 130px */
+            height: 182px; /* Increased by 40% from 130px */
+            background-image: url('https://i.ibb.co/TKxqDzK/coindol-removebg-preview.png');
+            background-size: cover;
+            cursor: pointer;
+            margin-bottom: 20px; /* Space below the coin button */
+        }
+        .score {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: white;
+        }
+        .nickname {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: white;
+        }
+        .center-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: calc(100vh - 100px); /* Adjust height to account for top-container and bottom-container height */
         }
     </style>
 </head>
 <body>
-    <div class="input-container">
-        <label for="nicknameInput">Your nickname:</label>
-        <input type="text" id="nicknameInput" placeholder="Enter your nickname" />
-        <button onclick="setNickname()">Set</button>
+    <div class="top-container">
+        <div class="input-container">
+            <label for="nicknameInput">Your nickname:</label>
+            <input type="text" id="nicknameInput" placeholder="Enter your nickname" />
+            <button onclick="setNickname()">Set</button>
+        </div>
     </div>
-    <div class="nickname">Nickname: <span id="nickname">Not set</span></div>
-    <div class="score">Score: <span id="score">0</span></div>
-    <div class="coin" onclick="increaseScore()"></div>
-    <button id="connectTonWallet">Connect TON Wallet</button>
+    <div class="center-container">
+        <div class="nickname">Nickname: <span id="nickname">Not set</span></div>
+        <div class="score">Score: <span id="score">0</span></div>
+        <div class="coin" onclick="increaseScore()"></div>
+    </div>
 
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCjKuXdZA7qKhdARrIwfrnnU_fmD2XTIhg",
@@ -94,13 +108,29 @@
         let nickname = null;
         let score = 0;
 
-        function setNickname() {
+        async function setNickname() {
             const input = document.getElementById('nicknameInput').value.trim();
             if (input) {
-                nickname = input;
-                document.getElementById('nickname').textContent = nickname;
-                localStorage.setItem('nickname', nickname);
-                loadScoreFromFirebase();
+                const nicknameTaken = await checkNicknameExists(input);
+                if (nicknameTaken) {
+                    alert('Nickname already taken, please choose another one.');
+                } else {
+                    nickname = input;
+                    document.getElementById('nickname').textContent = nickname;
+                    localStorage.setItem('nickname', nickname);
+                    loadScoreFromFirebase();
+                }
+            }
+        }
+
+        async function checkNicknameExists(nickname) {
+            try {
+                const q = query(doc(db, "players", nickname));
+                const querySnapshot = await getDocs(q);
+                return !querySnapshot.empty;
+            } catch (error) {
+                console.error("Error checking nickname existence: ", error);
+                return false;
             }
         }
 
@@ -163,22 +193,6 @@
 
         window.setNickname = setNickname;
         window.increaseScore = increaseScore;
-
-        // Initialize TON Web SDK and connect wallet
-        const tonWeb = new TonWeb();
-        const ton = tonWeb.provider;
-
-        document.getElementById('connectTonWallet').addEventListener('click', async () => {
-            try {
-                const wallet = await ton.requestAccounts();
-                console.log('Connected TON Wallet:', wallet);
-                alert('TON Wallet connected!');
-            } catch (error) {
-                console.error('Error connecting TON Wallet:', error);
-                alert('Failed to connect TON Wallet');
-            }
-        });
     </script>
 </body>
 </html>
-
