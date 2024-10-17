@@ -1,0 +1,143 @@
+* {
+    font-family: "Raleway", "Helvetica", sans-serif;
+    font-weight: bold;
+}
+
+body {
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    margin-left: 8px;
+}
+
+.header {
+    color: rgb(255, 255, 255);
+    display: flex;
+    align-items: center;
+    background-color:black;
+    height: 50px;
+}
+
+/* .header::after {
+    content: "";
+    background: rgb(212, 255, 0);
+    position: absolute;
+    opacity: .50;
+    top: 0;
+    left: 0;
+    height: 500px;
+    width: 100%;
+    transition: all .30s ease;
+} */
+
+
+.dotnet {
+    text-align: center;
+    list-style-type: none;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    margin-left: 0;
+}
+
+.dotnet.link {
+    position: relative;
+}
+
+.dotnet li:last-of-type a {
+    color: rgb(255, 255, 255);
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+    margin-left: 10px;
+    height: 30px;
+    padding: 0 10px;
+    line-height: 30px;
+    background-color: rgb(252, 255, 56);
+    font-size: 20px;
+    border-radius: 10px;
+}
+
+body {
+    margin: 0;
+}
+
+.dotnet li:last-child a:hover {
+    background-color: rgb(31, 38, 0);
+    transition: all .45s ease;
+}
+
+.dotnet li {
+    margin-left: 14px;
+    display: flex;
+    font-size: 14px;
+}
+
+.about {
+    margin-left: 30px;
+    font-size: 50px;
+}
+
+p {
+    margin-left: 35px;
+}
+
+.logo-img {
+
+    height: 35px;   
+}
+
+.logo-link {
+    display: flex;
+    height: 100%;
+    align-items: center;
+}
+
+hr {
+    border: none;
+    background-color: rgb(136, 135, 135);
+}
+
+
+.big {
+    margin-left: 30px;
+    font-size: 40px;
+}
+
+.first-page {
+    font-size: 25px;
+}
+
+.blog-text {
+    font-size: 70px;
+}
+
+.info-blog {
+    font-size: 30px;
+}
+
+.tou-blog {
+    font-size: 23px;
+}
+
+.where-tou-text {
+    font-size: 35px;
+}
+
+.down-pad {
+    border-radius: 10px;
+    font-size: 30px;
+    width: 40px;
+    margin-left: 30px;
+    color: black;
+    background-color: white;
+}
+
+.down-pad li:hover {
+    background-color: rgb(255, 230, 0);
+    transition: all .40s ease;
+}
